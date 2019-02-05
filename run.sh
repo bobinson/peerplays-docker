@@ -57,7 +57,8 @@ fi
 if [[ ! -f "$CONF_FILE" ]]; then
     if [[ -f "$EXAMPLE_CONF" ]]; then
         echo "${YELLOW}File config.ini not found. copying example (seed)${RESET}"
-        cp -v "$DATADIR/witness_node_data_dir/config.ini.example" "$DATADIR/witness_node_data_dir/config.ini" 
+        #TODO: handle config file
+        cp -v "$DATADIR/witness_node_data_dir/config.ini.example" "$DATADIR/witness_node_data_dir/seed_config.ini" 
         echo "${GREEN} > Successfully installed example config for seed node.${RESET}"
         echo " > You may want to adjust this if you're running a witness, e.g. disable p2p-endpoint"
     else

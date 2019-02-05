@@ -1,30 +1,17 @@
-# Steem-in-a-box by @someguy123
+This is a quick cloene of # Steem-in-a-box by @someguy123 for PeerPlays
 
-**Steem-in-a-box** is a toolkit for using the Steem [docker images](https://hub.docker.com/r/someguy123/steem/tags/) published by @someguy123.
-
-It's purpose is to simplify the deployment of `steemd` nodes.
-
-Features:
-
- - Automatic docker installer
- - Easily update Steem (steemd, cli_wallet etc.) with binary images
- - Easily build your own new versions of Steem by editing the docker files
- - Single command to download and install block_log from gtg's server
- - Easily adjust /dev/shm size
- - Automatically forwards port 2001 for seeds
- - Automatically installs a working example configuration for seeds, which can easily be customized for witnesses and full nodes
- - Quick access to common actions such as start, stop, replay, rebuild, local wallet, remote wallet, and much more
- - Constantly maintained by a top 20 Steem witness (@someguy123) - updated docker images are often available within 24 hours of version release
 
  
  
 # Usage
 
+NOTE: Right now install, start & restart works fine
+
 To install a witness or seed node:
 
 ```bash
 git clone https://github.com/someguy123/steem-docker.git
-cd steem-docker
+cd peerplays-docker
 # If you don't already have a docker installation, this will install it for you
 ./run.sh install_docker
 
@@ -40,21 +27,19 @@ nano data/witness_node_data_dir/config.ini
 # will help you to adjust settings for steem-in-a-box
 nano .env
 
-# Once you've configured your server, it's recommended to download the block log, as replays can be
-# faster than p2p download
-./run.sh dlblocks
+
 
 # You'll also want to set the shared memory size (use sudo if not logged in as root). 
 # Adjust 64G to whatever size is needed for your type of server and make sure to leave growth room.
 # Please be aware that the shared memory size changes constantly. Ask in a witness chatroom if you're unsure.
-./run.sh shm_size 64G
+#TODO
+#./run.sh shm_size 64G
 
 # It's recommended to set vm.swappiness to 1, which tells the system to avoid using swap 
 # unless absolutely necessary. To persist on reboot, place in /etc/sysctl.conf
 sysctl -w vm.swappiness=1
 
-# Then after you've downloaded the blockchain, you can start steemd in replay mode
-./run.sh replay
+
 # If you DON'T want to replay, use "start" instead
 ./run.sh start
 ```
@@ -67,42 +52,6 @@ Simply add this to the bottom of the file on a new line. Be sure not to damage a
 tmpfs   /dev/shm         tmpfs   nodev,nosuid,size=64G          0  0
 ```
 
-# Full node (RPC)
-
-To install a full RPC node - follow the same steps as above, but use `install_full` instead of `install`.
-
-Remember to adjust the config, you'll need a higher shared memory size (potentially up to 1 TB), and various plugins.
-
-For handling requests to your full node in docker, I recommend spinning up an nginx container, and connecting nginx to the steem node using a docker network.
-
-Example:
-
-```
-docker network create rpc_default
-# Assuming your RPC container is called "rpc1" instead of witness/seed
-docker network connect rpc_default rpc1
-docker network connect rpc_default nginx
-```
-
-Nginx will now be able to access the container RPC1 via `http://rpc1:8090` (assuming 8090 is the RPC port in your config). Then you can set up SSL and container port forwarding as needed for nginx.
-
-# Updating your Steem node
-
-To update to a newer version of Steem, first check [@someguy123's docker hub](https://hub.docker.com/r/someguy123/steem/tags/) to see if a new version of Steem is uploaded. Low memory mode (witness/seed) images are tagged like "v0.20.0", while full node images are tagged as "v0.20.0-full". 
-
-Security updates may not be tagged under a specific version, instead `latest`/`latest-full` will simply show a newer "Last Updated" on docker hub.
-
-If there is a new version available, then you can update using the following (be warned, a replay is needed in many cases):
-
-```
-git pull
-./run.sh install
-./run.sh restart
-```
-
-**If you're updating a full node, please remember to use `install_full` instead of install.**
-
-If you experience issues during restart, try running replay instead. You may also want to check [@someguy123's steemit](https://steemit.com/@someguy123) for any special update instructions, such as config changes.
 
 # Checking the status of your node
 
@@ -112,6 +61,7 @@ You can use the `logs` command to see the output from steemd:
 ./run.sh logs
 ```
 
+#TODO: needs testing
 You can also connect the local wallet using:
 
 ```
@@ -141,11 +91,7 @@ Full list of possible configuration options:
  - **PORTS** - default `2001` - a comma separated list of ports in steemd to forward to the internet
  - **DOCKER_NAME** - default `seed` - the container name to use for your steemd server
  - **DOCKER_DIR** - default `$DIR/dkr` - The directory to build the low memory node docker image from
- - **FULL_DOCKER_DIR** - default `$DIR/dkr_fullnode` - The directory to build the full-node RPC node docker image from
- - **DK_TAG** - default `someguy123/steem:latest` - The docker tag to obtain Steem from. Useful for installing beta versions, or downgrading to previous versions.
- - **DK_TAG_FULL** - default `someguy123/steem:latest-full` - The docker tag to obtain Steem (full RPC node)  from. Useful for installing beta versions, or downgrading to previous versions.
- - **SHM_DIR** - default `/dev/shm` - override the location of shared_memory.bin and shared_memory.meta. /dev/shm is a RAM disk on Linux, and can be adjusted with `shm_size`
- - **REMOTE_WS** - default `wss://steemd.privex.io` - the websocket server to use for the `remote_wallet` command
+ - **SHM_DIR** - default `/dev/shm` - override the location of shared_memory.bin and 
 
 # Commands
 

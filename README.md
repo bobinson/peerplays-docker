@@ -5,12 +5,17 @@ This is a quick cloene of # Steem-in-a-box by @someguy123 for PeerPlays
  
 # Usage
 
-NOTE: Right now install, start & restart works fine
+NOTE: Right now install, build, start & restart works fine.
+ie 
+./run.sh install
+./run.sh build
+./run.sh start
+./run.sh restart
 
 To install a witness or seed node:
 
 ```bash
-git clone https://github.com/someguy123/steem-docker.git
+git clone https://github.com/bobinson/peerplays-docker.git
 cd peerplays-docker
 # If you don't already have a docker installation, this will install it for you
 ./run.sh install_docker

@@ -27,13 +27,18 @@ ARG steemd_version=master
 RUN cd ~ && \
 	git clone https://github.com/PBSA/peerplays.git && \
 	cd peerplays && \
+	BOOST_ROOT=$HOME/opt/boost_1_57_0 &&\
+	wget -c 'http://sourceforge.net/projects/boost/files/boost/1.57.0/boost_1_57_0.tar.bz2/download' -O boost_1_57_0.tar.bz2 &&\
+	tar xjf boost_1_57_0.tar.bz2 &&\
+	cd boost_1_57_0/ &&\
+	./bootstrap.sh "--prefix=$BOOST_ROOT" &&\
+	./b2 install &&\
 	git checkout ${steemd_version} && \
 	git submodule update --init --recursive && \
         cd ~/peerplays && \
-	cmake -DCMAKE_BUILD_TYPE=Release . &&\
+	cmake -DBOOST_ROOT="$BOOST_ROOT" -DCMAKE_BUILD_TYPE=Release . &&\
 	make -j$(nproc) && make install && rm -rf ~/peerplays
 VOLUME /peerplays
 WORKDIR /peerplays
-
 RUN echo "Please configure me! You need to mount a data directory onto /steem of this container to it to function correctly. (if you're using Steem-in-a-box most of this is handled automatically)"
 CMD ["sh", "-c", "/usr/local/bin/steemd"]
